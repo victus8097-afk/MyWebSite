@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خالد | مطور تطبيقات فلاتر</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK (Compat Version for simple CDN usage) -->
+    <script defer src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    <script defer src="firebase-config.js"></script>
+</head>
+<body>
+    <div class="bg-animated"></div>
+    
+    <div id="app-container" class="container">
+        
+        <!-- ================= HOME VIEW ================= -->
+        <div id="view-home" class="view">
+            <header class="hero">
+                <div class="profile-pic">
+                    <img src="images/profile.png" alt="Profile" id="profile-img">
+                </div>
+                <h1 class="name">خالد عبدالرحمن</h1>
+                <p class="bio">مطور تطبيقات Flutter | أصنع تجارب رقمية مذهلة.</p>
+                <div class="social-links">
+                    <a href="https://instagram.com/pal_skf" class="social-btn"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/967730383438" class="social-btn"><i class="fab fa-whatsapp"></i></a>
+                    <a href="mailto:victus8097@gmail.com" class="social-btn"><i class="fas fa-envelope"></i></a>
+                </div>
+            </header>
+
+            </header>
+
+            <main class="content">
+                <div class="section-wrapper">
+                    <h2 class="section-title">تطبيقاتي</h2>
+                    <div id="projects-grid" class="projects-grid">
+                        <div class="loading-state">جاري تحميل التطبيقات...</div>
+                    </div>
+                </div>
+
+                <section id="quick-message" class="quick-message-section">
+                    <h2 class="section-title">أرسل لي رسالة</h2>
+                    <div class="message-card">
+                        <div class="msg-input-wrap">
+                            <textarea id="user-message" placeholder="أرسل لي رسالة مجهولة..."></textarea>
+                            <button id="send-msg-btn" class="send-icon-btn" aria-label="إرسال">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- ================= DETAILS VIEW ================= -->
+        <div id="view-details" class="view hidden">
+            <nav class="nav-bar">
+                <button onclick="router.navigate('home')" class="back-btn"><i class="fas fa-arrow-right"></i> عودة</button>
+            </nav>
+            <div id="details-render">
+                <!-- Project details injected here -->
+            </div>
+        </div>
+
+        <!-- ================= ADMIN VIEW ================= -->
+        <div id="view-admin" class="view hidden">
+            <nav class="nav-bar">
+                <button onclick="router.navigate('home')" class="back-btn"><i class="fas fa-arrow-right"></i> عودة</button>
+                <h2 id="admin-title">لوحة التحكم</h2>
+            </nav>
+            
+            <div id="admin-login" class="admin-card">
+                <h3>الدخول للمسؤول</h3>
+                <input type="password" id="admin-pass" placeholder="كلمة المرور">
+                <button id="login-btn" class="primary-btn">دخول</button>
+            </div>
+
+            <div id="admin-dashboard" class="hidden">
+                <div class="tab-btns">
+                    <button onclick="admin.showTab('apps')" class="tab-btn active">التطبيقات</button>
+                    <button onclick="admin.showTab('messages')" class="tab-btn">الرسائل</button>
+                </div>
+
+                <div id="admin-apps" class="admin-section">
+                    <button id="add-app-btn" class="add-btn">+ إضافة تطبيق جديد</button>
+                    <div id="admin-apps-list" class="admin-list"></div>
+                </div>
+
+                <div id="admin-messages" class="admin-section hidden">
+                    <button id="delete-all-msgs" class="delete-btn" style="width:100%; margin-bottom:1rem;">حذف جميع الرسائل</button>
+                    <div id="admin-msg-list" class="admin-list"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <footer class="footer">
+            <p>© 2026 جميع الحقوق محفوظة</p>
+            <button onclick="router.navigate('admin')" class="admin-toggle-btn">المسؤول</button>
+        </footer>
+    </div>
+
+    <!-- Success Modal (Custom Popup) -->
+    <div id="success-modal" class="modal hidden">
+        <div class="modal-content success-box">
+            <i class="fas fa-check-circle success-icon"></i>
+            <h3>تم الإرسال بنجاح</h3>
+            <p>شكراً لرسالتك اللطيفة!</p>
+            <button onclick="ui.closeSuccess()" class="primary-btn">موافق</button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="app-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="modal-title">إضافة تطبيق</h3>
+            <div class="input-group">
+                <label>اسم التطبيق</label>
+                <input type="text" id="app-name" placeholder="مثلاً: تطبيق يَومية">
+            </div>
+            <div class="input-group">
+                <label>الوصف</label>
+                <textarea id="app-desc" placeholder="وصف مفصل للتطبيق..."></textarea>
+            </div>
+            <div class="input-group">
+                <label>شعار التطبيق</label>
+                <input type="file" id="app-logo-file" accept="image/*">
+            </div>
+            <div class="input-group">
+                <label>صور التطبيق الحالية (يمكنك حذفها)</label>
+                <div id="edit-gallery-preview" class="edit-gallery-preview"></div>
+            </div>
+            <div class="input-group">
+                <label>إضافة صور جديدة (Screenshots)</label>
+                <input type="file" id="app-images-files" accept="image/*" multiple>
+            </div>
+            <div class="input-group">
+                <label>رابط التحميل (Google Drive)</label>
+                <input type="text" id="app-drive" placeholder="https://drive.google.com/...">
+            </div>
+            <div class="input-group-row">
+                <input type="checkbox" id="app-is-downloadable" checked>
+                <label for="app-is-downloadable">متاح للتحميل من الزوار</label>
+            </div>
+            <div id="upload-status" class="upload-status hidden">جاري الرفع...</div>
+            <div class="modal-actions">
+                <button id="save-app-btn" class="primary-btn">حفظ</button>
+                <button onclick="ui.closeModal()" class="cancel-btn">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
