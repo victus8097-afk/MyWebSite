@@ -113,10 +113,23 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     };
 
+    const convertToDirectLink = (url) => {
+        if (!url) return '#';
+        if (url.includes('drive.google.com')) {
+            const match = url.match(/\/d\/(.+?)\/(view|edit)/);
+            if (match && match[1]) {
+                return `https://drive.google.com/u/0/uc?id=${match[1]}&export=download`;
+            }
+        }
+        return url;
+    };
+
     const renderDetails = (id) => {
         const app = apps.find(a => a.id === id);
         const renderArea = document.getElementById('details-render');
         if (!app) return renderArea.innerHTML = "تطبيق غير موجود";
+
+        const downloadUrl = convertToDirectLink(app.drive);
 
         renderArea.innerHTML = `
             <div class="detail-hero">
@@ -131,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div class="download-link-wrap">
                 ${app.isDownloadable !== false
-                ? `<a href="${app.drive || '#'}" target="_blank" class="download-btn">الحصول على التطبيق (Google Drive) <i class="fab fa-google-drive"></i></a>`
+                ? `<a href="${downloadUrl}" target="_blank" download class="download-btn">الحصول على التطبيق (تنزيل مباشر) <i class="fas fa-download"></i></a>`
                 : `<a href="https://wa.me/967730383438?text=${encodeURIComponent('مرحباً خالد، أرغب في طلب تطبيق: ' + app.name)}" target="_blank" class="download-btn request-btn">اطلب التطبيق الآن <i class="fab fa-whatsapp"></i></a>`}
             </div>
         `;
