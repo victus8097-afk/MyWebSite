@@ -313,52 +313,21 @@ body {
     text-align: center;
     background: rgba(255, 255, 255, 0.02);
     padding: 2.5rem 1.5rem;
-    border-radius: 30px;
+    border-radius: 35px;
     border: 1px solid var(--card-border);
     animation: fadeInDown 0.6s ease;
-}
-
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.detail-logo {
-    width: 90px;
-    height: 90px;
-    border-radius: 22px;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    background: #1e293b;
-}
-
-.details-title {
-    font-size: 1.8rem;
-    margin-bottom: 0.8rem;
-    letter-spacing: -0.5px;
-}
-
-.details-desc {
-    color: var(--text-secondary);
-    line-height: 1.8;
-    font-size: 1rem;
-    text-align: justify;
+    width: 100%;
 }
 
 .detail-gallery {
     display: flex;
-    gap: 1.2rem;
+    gap: 1rem;
     overflow-x: auto;
-    padding: 1rem 0.5rem;
+    padding: 1.5rem 0.5rem;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    justify-content: center; /* Center if few images */
+    width: 100%;
 }
 
 .detail-gallery::-webkit-scrollbar {
@@ -366,18 +335,25 @@ body {
 }
 
 .detail-img {
-    width: 240px;
+    width: clamp(200px, 70vw, 280px); /* Responsive width */
     height: auto;
-    border-radius: 20px;
+    border-radius: 18px;
     object-fit: cover;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     flex-shrink: 0;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.detail-img:hover {
-    transform: scale(1.03);
+@media (max-width: 480px) {
+    .detail-gallery {
+        justify-content: flex-start; /* For scrolling on tiny screens */
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    .detail-img {
+        width: 75vw; /* Larger on mobile */
+    }
 }
 
 /* Quick Message UI */
